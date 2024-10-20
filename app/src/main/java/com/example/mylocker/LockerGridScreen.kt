@@ -28,6 +28,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// @author Salim OUESLATI
+
 
 data class Casier(val id: Int, var estDisponible: Boolean, var user: String? = null)
 
@@ -51,26 +53,24 @@ val casiers = List(20) { index ->
 fun LockerGridScreen() {
     val casiersState = remember { mutableStateListOf(*casiers.toTypedArray()) }
 
-    // Variable d'état pour le casier sélectionné
+
     var selectedLocker by remember { mutableStateOf<Casier?>(null) }
     var lockerClosed by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Gestion des Casiers") }) },
-        content = { paddingValues -> // Ajout du padding pour éviter que le contenu soit caché par la TopAppBar
+        content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)  // Applique le padding pour éviter que le contenu chevauche la barre supérieure
+                    .padding(paddingValues)
             ) {
-                // Si aucun casier n'est fermé, afficher la grille des casiers
                 if (!lockerClosed) {
-                    // Affichage de la légende avant le LazyVerticalGrid
                     LegendSection()
 
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
-                        modifier = Modifier.weight(1f)  // Remplit l'espace vertical disponible
+                        modifier = Modifier.weight(1f)
                     ) {
                         items(casiersState.size) { index ->
                             val casier = casiersState[index]
@@ -78,11 +78,10 @@ fun LockerGridScreen() {
 
                             LockerItem(
                                 casier = casier,
-                                isSelected = selectedLocker == casier, // Vérifie si le casier est sélectionné
+                                isSelected = selectedLocker == casier,
                                 onClick = {
                                     if (casier.estDisponible) {
-                                        selectedLocker = casier  // Sélectionner le casier
-                                    } else {
+                                        selectedLocker = casier
                                         Toast.makeText(context, "Ce casier est réservé", Toast.LENGTH_SHORT).show()
                                     }
                                 }
@@ -91,7 +90,7 @@ fun LockerGridScreen() {
                     }
                 }
 
-                // Si un casier est sélectionné mais non encore fermé, afficher le bouton pour le fermer
+
                 selectedLocker?.let { casier ->
                     if (!lockerClosed) {
                         Box(
@@ -102,21 +101,21 @@ fun LockerGridScreen() {
                         ) {
                             Button(
                                 onClick = {
-                                    casier.estDisponible = false  // Simuler la fermeture du casier
+                                    casier.estDisponible = false
                                     lockerClosed = true
                                 },
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .height(50.dp)
-                                    .fillMaxWidth(), // Limiter la largeur à 60% de l'écran pour un look plus élégant
+                                    .fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFFF9800), // Utilisation de la couleur orange
+                                    containerColor = Color(0xFFFF9800),
                                     contentColor = Color.White // Couleur du texte
                                 )
                             ) {
                                 Text(
                                     text = "Verrouillez le casier numéro ${casier.id}",
-                                    style = MaterialTheme.typography.bodyMedium, // Style de texte moderne
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = Color.White
                                 )
                             }
@@ -124,13 +123,12 @@ fun LockerGridScreen() {
                     }
                 }
 
-                // Si le casier a été fermé, afficher un message de confirmation et le bouton pour ouvrir le casier
                 if (lockerClosed) {
                     Text(
                         text = buildAnnotatedString {
                             append("Casier Numéro ")
                             selectedLocker?.id?.let { id ->
-                                withStyle(style = SpanStyle(color = Color(0xFFFF9800))) { // Couleur orange
+                                withStyle(style = SpanStyle(color = Color(0xFFFF9800))) {
                                     append("$id")
                                 }
                             }
@@ -140,7 +138,7 @@ fun LockerGridScreen() {
                             .padding(16.dp),
                         textAlign = TextAlign.Center,
                         fontSize = 35.sp,
-                        color = Color.Blue // Couleur par défaut pour le reste du texte
+                        color = Color.Blue
                     )
                     Text(
                         text = "Le casier ${selectedLocker?.id} a été verrouillé avec succès !",
@@ -156,29 +154,28 @@ fun LockerGridScreen() {
                     ) {
                         Button(
                             onClick = {
-                                selectedLocker?.estDisponible = true  // Simuler l'ouverture du casier
-                                lockerClosed = false  // Réinitialiser l'état après ouverture
-                                selectedLocker = null  // Désélectionner le casier
+                                selectedLocker?.estDisponible = true
+                                lockerClosed = false
+                                selectedLocker = null
                             },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .height(50.dp)
-                                .fillMaxWidth(0.6f), // Limiter la largeur à 60% de l'écran
+                                .fillMaxWidth(0.6f),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50), // Couleur verte
-                                contentColor = Color.White // Couleur du texte
+                                containerColor = Color(0xFF4CAF50),
+                                contentColor = Color.White
                             )
                         ) {
                             Text(
                                 text = "Déverrouiller mon casier",
-                                style = MaterialTheme.typography.bodyMedium, // Style de texte moderne
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = Color.White,
                                 fontSize = 15.sp
                             )
                         }
                     }
 
-                    // Message indiquant que le casier est ouvert et rediriger vers la grille
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Cliquez sur le bouton pour déverrouiller le casier et revenir à la grille des casiers.",
@@ -197,7 +194,6 @@ fun LegendSection() {
         modifier = Modifier.padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        // Légende pour les couleurs des casiers
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
@@ -233,27 +229,25 @@ fun LegendSection() {
 
 @Composable
 fun LockerItem(casier: Casier, isSelected: Boolean, onClick: () -> Unit) {
-    // Choisir la couleur de fond en fonction de l'état du casier
     val backgroundColor = when {
-        isSelected -> Color(0xFFFF9800) // Couleur pour le casier sélectionné
-        casier.estDisponible -> Color(0xFF4CAF50)// Couleur pour le casier disponible
-        else -> Color.Red// Couleur pour le casier occupé
+        isSelected -> Color(0xFFFF9800)
+        casier.estDisponible -> Color(0xFF4CAF50)
+        else -> Color.Red
     }
 
-    // Utiliser Card pour le casier
     Card(
         modifier = Modifier
             .padding(8.dp)
             .size(100.dp)
-            .clickable { onClick() }, // Action quand on clique sur le casier
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        elevation = if (isSelected) CardDefaults.elevatedCardElevation(8.dp) else CardDefaults.elevatedCardElevation(2.dp) // Élévation conditionnelle
+        elevation = if (isSelected) CardDefaults.elevatedCardElevation(8.dp) else CardDefaults.elevatedCardElevation(2.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(), // Remplit tout l'espace du Card
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Casier ${casier.id}", color = Color.White) // Amélioration de la visibilité du texte
+            Text(text = "Casier ${casier.id}", color = Color.White)
         }
     }
 

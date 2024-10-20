@@ -1,10 +1,9 @@
 package com.example.mylocker
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -15,14 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.mylocker.R // Assurez-vous d'importer votre package
+
+//@author Salim OUESLATI
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
     var userId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -34,7 +33,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Ajouter l'image ici
         Image(
             painter = painterResource(id = R.drawable.my_locker_logo), // Remplacez par le nom de votre image
             contentDescription = "App Icon Logo",
@@ -82,7 +80,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFF9800), // Utilisation de la couleur orange
-            contentColor = Color.White // Couleur du texte
+            contentColor = Color.White
         )
         ) {
             Text(text = "Se connecter")
@@ -92,5 +90,15 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "User ID ou mot de passe incorrect", color = MaterialTheme.colorScheme.error)
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Pas encore de compte ? Inscrivez-vous",
+            modifier = Modifier.clickable {
+                onNavigateToRegister() // Appel de la fonction pour naviguer vers RegisterScreen
+            },
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Blue)
+        )
     }
 }
+

@@ -16,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mylocker.ui.theme.MyLockerTheme
 
+// @author Salim OUESLATI
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,17 +37,29 @@ fun App() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "login") {
-        // Route pour l'écran de connexion
         composable("login") {
-            LoginScreen(onLoginSuccess = {
-                // Naviguer vers l'écran des casiers après une connexion réussie
-                navController.navigate("lockers")
-            })
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate("lockers")
+                },
+                onNavigateToRegister = {
+                    navController.navigate("register")
+                }
+            )
         }
 
-        // Route pour l'écran des casiers
         composable("lockers") {
             LockerGridScreen()
         }
+
+        composable("register") {
+            RegisterScreen(
+                onRegisterSuccess = { navController.navigate("login") },  // Navigation sur succès
+                onNavigateToLogin = { navController.popBackStack() } // Retour à l'écran de connexion
+            )
+        }
+
+
+
     }
 }
