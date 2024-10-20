@@ -17,14 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.mylocker.services.signIn
+import kotlinx.coroutines.launch
 
 //@author Salim OUESLATI
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
-    var userId by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+
 
     Column(
         modifier = Modifier
@@ -47,8 +52,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = userId,
-            onValueChange = { userId = it },
+            value = email,
+            onValueChange = { email = it },
             label = { Text("User ID") },
             modifier = Modifier
                 .fillMaxWidth(),
@@ -69,21 +74,16 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                if (userId == "test" && password == "1234") {
-                    onLoginSuccess()
-                } else {
-                    showError = true
+        Button(onClick = {
+            coroutineScope.launch {
+                val (statusCode, responseMessage) = signIn(email, password)
+                message = when  {
+                    responseMessage?.signInData?.access_token?.isNotEmpty() == true -> "Connexion réussie ! ${responseMessage.signInData.access_token}"
+                    else -> "Erreur: ${responseMessage ?: "Erreur inconnue"}"
                 }
-            },
-            modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF9800), // Utilisation de la couleur orange
-            contentColor = Color.White
-        )
-        ) {
-            Text(text = "Se connecter")
+            }
+        }) {
+            Text("Sign In")
         }
 
         if (showError) {

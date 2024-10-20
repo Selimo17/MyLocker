@@ -19,6 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.mylocker.services.signUp
+import kotlinx.coroutines.launch
+import android.util.Log
 
 // @author Salim OUESLATI
 
@@ -27,9 +30,11 @@ import androidx.compose.ui.unit.dp
 fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+    var first_name by remember { mutableStateOf("") }
+    var last_name by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -53,8 +58,8 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
+            value = first_name,
+            onValueChange = { first_name = it },
             label = { Text("Prénom") },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp)
@@ -63,8 +68,8 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
+            value = last_name,
+            onValueChange = { last_name = it },
             label = { Text("Nom de famille") },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp)
@@ -82,19 +87,20 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            coroutineScope.launch {
+                val (statusCode, responseMessage) = signUp(email, password, first_name,last_name)
+                Log.i("$statusCode","$responseMessage")
+                message = when (statusCode) {
+                    204 -> "Inscription réussie !"
+                    else -> "Erreur: ${responseMessage ?: "Erreur inconnue"}"
+                }
+            }
+        }) {
+            Text("Sign Up")
+        }
 
-        Button(
-            onClick = {
-                // Ajoutez ici la logique pour appeler l'API et créer l'utilisateur
-                onRegisterSuccess() // Appeler la fonction sur succès
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFF9800),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Créer un compte")
+        Text(text = message, color = MaterialTheme.colorScheme.error)
         }
 
         if (showError) {
@@ -105,7 +111,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
             Text(text = "J'ai déjà un compte ? Se connecter")
         }
     }
-}
+
 
 
 
